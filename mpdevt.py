@@ -61,7 +61,7 @@ class PollingMPDClient(object):
     while self.running:
       status = self.client.status()
       
-      if(status.has_key("songid")):
+      if(status.has_key('songid')):
         if(self.currentSongID != status['songid']):
           self.emit("OnSongChange", evt=self.client.currentsong())
           self.currentSongID = status['songid']

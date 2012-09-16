@@ -4,7 +4,8 @@ import sys
 import logging
 import pylast
 import threading
-
+import traceback
+from decision import DecisionEngine
 from mpdevt import PollingMPDClient, mpd_listener
 
 @mpd_listener('OnSongChange')
@@ -23,10 +24,17 @@ if __name__ == "__main__":
       port = sys.argv[2]
     
     try:
+      #connect mpd client
       client = PollingMPDClient()
       client.connect(host=sys.argv[1], port=port)
+      
+      #populate the decision element
+      d = DecisionEngine(client.client)
+      d.populate()
+      
       l = raw_input()
-    except KeyboardInterrupt:
+    except Exception as e:
+      traceback.print_exc()
       print "exiting..."
     
     client.running = False
