@@ -5,11 +5,11 @@ Database stuff for the clustering application
 '''
 import logging
 
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, Table, ForeignKey
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
-
 
 #---------------------------------------------------------------
 
@@ -21,14 +21,14 @@ artist_tags = Table('artist_tags', Base.metadata,
 #---------------------------------------------------------------
 
 album_tags = Table('album_tags', Base.metadata,
-    Column('album_id', Integer, ForeignKey('artists.id')),
+    Column('album_id', Integer, ForeignKey('albums.id')),
     Column('tag_id', Integer, ForeignKey('tags.id'))
 )
 
 #---------------------------------------------------------------
 
 song_tags = Table('song_tags', Base.metadata,
-    Column('song_id', Integer, ForeignKey('artists.id')),
+    Column('song_id', Integer, ForeignKey('songs.id')),
     Column('tag_id', Integer, ForeignKey('tags.id'))
 )
   
@@ -60,7 +60,7 @@ class Album(Base):
   
   id = Column(Integer, primary_key=True)
   title = Column(String)
-  artist = Column(Integer, ForeignKey('artists.id'))
+  artist_id = Column(Integer, ForeignKey('artists.id'))
   tags = relationship("Tag", secondary=album_tags, backref="albums")
   
 #---------------------------------------------------------------
@@ -71,8 +71,8 @@ class Song(Base):
   
   id = Column(Integer, primary_key=True)
   title  = Column(String)
-  artist = Column(Integer, ForeignKey('artists.id'))
-  album  = Column(Integer, ForeignKey('albums.id'))
+  artist_id = Column(Integer, ForeignKey('artists.id'))
+  album_id  = Column(Integer, ForeignKey('albums.id'))
   tags = relationship("Tag", secondary=song_tags, backref="songs")
-  
+
 #---------------------------------------------------------------
