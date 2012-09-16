@@ -26,7 +26,7 @@ def mpd_listener( evttype ):
 
 #------------------------------------------- PollingMPDClient -------------------------------------------
 
-class PollingMPDClient():
+class PollingMPDClient(object):
   
   currentSongID = 0
   running = False
@@ -61,10 +61,11 @@ class PollingMPDClient():
     while self.running:
       status = self.client.status()
       
-      if(self.currentSongID != status['songid']):
-	self.emit("OnSongChange", evt=self.client.currentsong())
-	self.currentSongID = status['songid']
-	
+      if(status.has_key("songid")):
+        if(self.currentSongID != status['songid']):
+          self.emit("OnSongChange", evt=self.client.currentsong())
+          self.currentSongID = status['songid']
+
       time.sleep(POLLING_INTERVAL)
       
       
@@ -75,5 +76,5 @@ class PollingMPDClient():
      
      if(_event_listeners.has_key(type)):
        for listener in _event_listeners[type]:
-	 listener(type, *args, **kwargs)
+         listener(type, *args, **kwargs)
        
