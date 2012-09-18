@@ -10,7 +10,6 @@ from mpdevt import mpd_listener
 API_KEY    = "21e7e21f732bac4749c6deb03b902cc5"
 API_SECRET = "5d529e71dacfef10ae597a086a435afe"
 
-
 class DecisionEngine(object):
   '''Class that decides what to add to the play queue
   '''
@@ -32,6 +31,8 @@ class DecisionEngine(object):
         
         #add song to list
         self.songs[song['file']] = song
+        
+        #add last fm data to song
         
       else:
         self.logger.info("Could not add song %s", song)
