@@ -1,6 +1,7 @@
 import cluster
 import pylast
 import os
+import json
 from mutagen.easyid3 import EasyID3
 
 API_KEY    = "21e7e21f732bac4749c6deb03b902cc5"
@@ -11,22 +12,57 @@ network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
 def gather_data( path ):
   
   metadata = []
+  music_files = []
   
   #walk the directory looking for music
   for root, dirs, files in os.walk(path):
     for file in files:
       if(file.endswith(".mp3")):
-	metadata.append(process_file(os.path.join(root,file)))
+        music_files.append(os.path.join(root,file))
 
+  #now do the processing
+  music_count = len(music_files)
+  print "There are %d MP3 files detected" % music_count
+
+  i = 1
+  for f in music_files:
+    print "[%d%%] %d / %d " % ( i*100/music_count , i, music_count )
+    metadata.append( process_file(f) )
+    i += 1
   return metadata
 
 def process_file( file_path ):
   '''Process a file and get metadata'''
+  metadata = {}
   e = EasyID3( file_path )
-  return e
+  
+  for key in 'title','artist','album':
+    metadata[key] = e[key][0]
+    
+  #get the last fm data
+  l_track = network.get_track(e['artist'][0], e['title'][0])
+  
+  tags = []
+  for tag in l_track.get_top_tags():
+    if(tag.weight > 20):
+      tags.append(tag.item.name)
+    
+  metadata['tags'] = tags
+  
+  return metadata
 
 if __name__ == "__main__":
-  files = gather_data("/home/james/tmp/")
   
-  for f in files:
-    print f['title'][0] + " - " + f['artist'][0]
+  if not(os.path.exists("/tmp/testdata")):
+    data = gather_data("/home/james/tmp/")
+    
+    with open("/tmp/testdata",'w') as f:
+      json.dump(data, f)
+      
+  else:
+    
+    with open("/tmp/testdata",'r') as f:
+      data = json.load(f)
+    
+  for d in data:
+    print data
