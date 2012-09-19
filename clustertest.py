@@ -86,8 +86,6 @@ def get_tags(artist , title):
 
 if __name__ == "__main__":
   
-  
-  
   if not(os.path.exists("/tmp/testdata")):
     data = gather_mpd_data()
     #data = gather_data("/home/james/tmp/")
@@ -100,7 +98,8 @@ if __name__ == "__main__":
     with open("/tmp/testdata",'r') as f:
       data = json.load(f)
     
-  c1 = cluster.Cluster([data[0]])
-  c2 = cluster.Cluster([data[1]])
+  c = cluster.MusicClusterer()
   
-  print c2.distance(c1)
+  cl =  c.cluster(data)
+  
+  c.display_songs(cl.data[1].data[0].data[0].data[1])
