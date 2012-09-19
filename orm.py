@@ -11,6 +11,11 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+def init(engine):
+  ''' Given a db engine, create the relevent tables
+  '''
+  Base.metadata.create_all(engine)
+
 #---------------------------------------------------------------
 
 artist_tags = Table('artist_tags', Base.metadata,

@@ -4,33 +4,37 @@ import sys
 import logging
 import pylast
 import threading
-
+import traceback
+from decision import DecisionEngine
 from mpdevt import PollingMPDClient, mpd_listener
-
-
-API_KEY    = "21e7e21f732bac4749c6deb03b902cc5"
-API_SECRET = "5d529e71dacfef10ae597a086a435afe"
 
 @mpd_listener('OnSongChange')
 def test_listener(type, evt):
   logging.info("Now playing: %s - %s", evt['title'], evt['artist'])
 
 if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
+  logging.basicConfig(level=logging.DEBUG)
   logging.info("Starting QMPD...")
   
   if(len(sys.argv) > 1):
     
-    if(len(sys.argv) > 2):
+    if(len(sys.argv) < 3):
       port = 6600
     else:
       port = sys.argv[2]
     
     try:
+      #connect mpd client
       client = PollingMPDClient()
       client.connect(host=sys.argv[1], port=port)
+      
+      #populate the decision element
+      d = DecisionEngine(client.client)
+      d.populate()
+      
       l = raw_input()
-    except KeyboardInterrupt:
+    except Exception as e:
+      traceback.print_exc()
       print "exiting..."
     
     client.running = False

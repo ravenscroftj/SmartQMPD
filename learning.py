@@ -14,7 +14,6 @@ _Session = sessionmaker()
 class LearningEngine(object):
   '''Class that does some clever stuff to help figure out what song to play next
   '''
-  
   songs = {}
   
   def __init__(self, dbengine):
