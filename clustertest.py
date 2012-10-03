@@ -75,10 +75,10 @@ def get_tags(artist , title):
   
   l_track = network.get_track(artist, title)
   
-  tags = []
+  tags = {}
   for tag in l_track.get_top_tags():
     if(tag.weight > 20):
-      tags.append(tag.item.name)
+      tags[tag.item.name] = float(tag.weight)
   
   return tags
 
@@ -102,4 +102,4 @@ if __name__ == "__main__":
   
   cl =  c.cluster(data)
   
-  c.display_songs(cl.data[1].data[0].data[0].data[1])
+  c.display_songs(cl.data[0].data[0])

@@ -94,18 +94,20 @@ class Cluster:
     
     x = 0.0
     
-    for t in tags_1:
-      if t in tags_2: x += 1
+    
+    for t in tags_1.keys():
+      if t in tags_2.keys():
+        x += tags_1[t] * tags_2[t]
     
     return x / max( i_1, i_2 )
     
   def get_tags(self):
     
     if(self.tags == None):
-      self.tags = []
+      self.tags = {}
       
       for d in self.data:
-          self.tags.extend(d.tags)
+          self.tags = dict(self.tags.items() + d.tags.items())
   
     return self.tags
   
